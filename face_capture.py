@@ -9,12 +9,15 @@ def face_extractor(cap_frame):
     cap_face = face_classifier.detectMultiScale(gray_frame, scaleFactor=1.3, minNeighbors=5)
 
     for (x, y, w, h) in cap_face:
-        crop_face = cap_frame[y:y + h, x:x + w]
-        return crop_face
+        roi = cap_frame[y:y + h, x:x + w]
+        return roi
 
 
 print('Enter your name: ', end='')
-directory = input()
+name = input()
+print('Enter your surname: ', end='')
+surname = input()
+directory = name+'-'+surname
 if not path.exists('data/'+str(directory.lower())):
     makedirs('data/'+str(directory.lower()))
 
@@ -30,13 +33,12 @@ while True:
         cv2.imwrite(file_name_path, face)
         count += 1
 
-        cv2.putText(face, str(count), (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, 255, 2)
+        cv2.putText(face, str(count), (50, 50), cv2.FONT_HERSHEY_COMPLEX, 1, 200, 2)
         cv2.imshow('Collecting samples', face)
     else:
         print('Face not found')
 
-    key = cv2.waitKey(30) & 0xFF
-    if key == ord('q') or count == 150:
+    if cv2.waitKey(30) & 0xFF == ord('q') or count == 150:
         break
 
 cap.release()
