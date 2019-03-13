@@ -7,13 +7,14 @@ recognizer_lbph.read("trainner.yml")
 
 labels = {}
 with open('labels/face-labels.pickle', 'rb') as file:
-    orginal_labels = pickle.load(file)
-    labels = {v: k for k, v in orginal_labels.items()}
+    org_labels = pickle.load(file)
+    labels = {v: k for k, v in org_labels.items()}
 
 cap = cv2.VideoCapture(0)
 
 while True:
     retval, frame = cap.read()
+    # Face detection
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     cap_face = face_classifier.detectMultiScale(gray_frame, scaleFactor=1.3, minNeighbors=5)
 
@@ -21,7 +22,7 @@ while True:
         roi_gray = gray_frame[y:y + h, x:x + h]
         cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
-        # recognition
+        # Recognition based on trained model
         id_, confidence = recognizer_lbph.predict(roi_gray)
         confidence = int(100 * (1 - (confidence / 300)))
         if confidence > 75:
